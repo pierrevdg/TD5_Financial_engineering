@@ -10,7 +10,7 @@ class Order:
         self.price = price
         print("--------------------------------")
         print(f"--- Insert {self.order_type} {self.quantity}@{self.price} id={self.number} on {self.book_name}")
-        print(f"Book on {self.book_name")
+        print(f"Book on {self.book_name}")
 
 class Book:
     ordersList = [] #list of all the orders
@@ -26,7 +26,7 @@ class Book:
         sell_order =  Order(self.name, "SELL", quantity, price)
         total_quantity = 0
         for order in Book.ordersList:
-            if(order.order_type = "BUY"):
+            if(order.order_type == "BUY"):
                 total_quantity += order.quantity
         if(total_quantity >= quantity):
             while(quantity > 0):
@@ -48,4 +48,4 @@ class Book:
     def showing():
         Book.ordersList.sort(key = lambda x: x.price, reverse = True)
         for order in Book.ordersList:
-            print(f"         {order.order_type] {order.quantity}@{order.price] id={order.number}")
+            print(f"         {order.order_type} {order.quantity}@{order.price} id={order.number}")
