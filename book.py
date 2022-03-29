@@ -10,7 +10,6 @@ class Order:
         self.price = price
         print("--------------------------------")
         print(f"--- Insert {self.order_type} {self.quantity}@{self.price} id={self.number} on {self.book_name}")
-        print(f"Book on {self.book_name}")
 
 class Book:
     ordersList = [] #list of all the orders
@@ -19,33 +18,49 @@ class Book:
         self.name = name
 
     def insert_buy(self, quantity, price):
-        Book.ordersList.append(Order(self.name, "BUY", quantity, price))
-        Book.showing()
+        buy_order = Order(self.name, "BUY", quantity, price)
+        for order in Book.ordersList:
+            if(order.order_type == "SELL"):
+                if(price >= order.price):
+                    if(order.quantity > quantity):
+                        print("Execute ", quantity, " at ", order.price, " on ", order.book_name)
+                        order.quantity -= quantity
+                        quantity = 0
+                        break
+                    else:
+                        print("Execute ", order.quantity, " at ", order.price, " on ", order.book_name)
+                        quantity -= order.quantity
+                        order.quantity = 0
+        if(quantity > 0):
+            buy_order.quantity = quantity
+            Book.ordersList.append(buy_order)
+        Book.showing(self)
 
     def insert_sell(self, quantity, price):
         sell_order =  Order(self.name, "SELL", quantity, price)
-        total_quantity = 0
         for order in Book.ordersList:
             if(order.order_type == "BUY"):
-                total_quantity += order.quantity
-        if(total_quantity >= quantity):
-            while(quantity > 0):
-                for order in Book.ordersList:
-                    if(order.order_type == "BUY"):
-                        if(order.quantity > quantity):
-                            print("Execute ", quantity, " at ", order.price, " on ", order.book_name)
-                            order.quantity -= quantity
-                            quantity = 0
-                            break
-                        else:
-                            print("Execute ", order.quantity, " at ", order.price, " on ", order.book_name)
-                            quantity -= order.quantity
-                            Book.ordersList.remove(order)
-        else:
+                if(price <= order.price):
+                    if(order.quantity > quantity):
+                        print("Execute ", quantity, " at ", order.price, " on ", order.book_name)
+                        order.quantity -= quantity
+                        quantity = 0
+                        break
+                    else:
+                        print("Execute ", order.quantity, " at ", order.price, " on ", order.book_name)
+                        quantity -= order.quantity
+                        order.quantity = 0
+        if(quantity > 0):
+            sell_order.quantity = quantity
             Book.ordersList.append(sell_order)
-        Book.showing()
+        Book.showing(self)
 
-    def showing():
+    def showing(self):
+        print("Book on ", self.name)
         Book.ordersList.sort(key = lambda x: x.price, reverse = True)
+        for j in range(0, len(Book.ordersList) - 1):
+            for i in range(0, len(Book.ordersList) - 1):
+                if(Book.ordersList[i].quantity == 0):
+                    del Book.ordersList[i]
         for order in Book.ordersList:
             print(f"         {order.order_type} {order.quantity}@{order.price} id={order.number}")
